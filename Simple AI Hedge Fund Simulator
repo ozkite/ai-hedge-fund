@@ -1,0 +1,53 @@
+// bot.js - Simple AI Hedge Fund Simulator
+const chalk = require('chalk');
+
+// === CONFIG ===
+const FUND_NAME = "AI Hedge Fund";
+const INITIAL_CAPITAL = 10000; // $10,000
+const RISK_FACTOR = 0.1; // 10% risk per trade
+const SYMBOLS = ["BTC", "ETH", "CEL", "MATIC", "SOL"];
+let balance = INITIAL_CAPITAL;
+let trades = 0;
+let wins = 0;
+
+console.log(chalk.green.bold(`🚀 Starting ${FUND_NAME}`));
+console.log(chalk.blue(`Initial Capital: $${INITIAL_CAPITAL}\n`));
+
+// === Simulate AI Decision ===
+function makeTrade() {
+    const symbol = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+    const investment = balance * RISK_FACTOR;
+    const outcome = Math.random() > 0.45; // 55% win rate (AI edge)
+    const profit = outcome ? investment * (0.02 + Math.random() * 0.08) : -investment;
+
+    balance += profit;
+    trades++;
+    if (outcome) wins++;
+
+    const result = outcome ? chalk.green(`+ $${profit.toFixed(2)}`) : chalk.red(`- $${(-profit).toFixed(2)}`);
+    console.log(
+        `${trades}. 🤖 AI traded ${chalk.bold(symbol)} | ${result} | Balance: $${balance.toFixed(2)}`
+    );
+}
+
+// === Run Simulation ===
+console.log(chalk.yellow("Running daily AI trades...\n"));
+
+for (let day = 1; day <= 7; day++) {
+    console.log(chalk.bold(`\n📅 Day ${day}`));
+    for (let i = 0; i < 3; i++) {
+        makeTrade();
+        await sleep(100); // Simulate delay
+    }
+}
+
+console.log(chalk.bgBlue("\n📊 Weekly Summary"));
+console.log(`Total Trades: ${trades}`);
+console.log(`Win Rate: ${(wins / trades * 100).toFixed(1)}%`);
+console.log(`Final Balance: $${balance.toFixed(2)}`);
+console.log(`Profit/Loss: $${(balance - INITIAL_CAPITAL).toFixed(2)} (${((balance - INITIAL_CAPITAL) / INITIAL_CAPITAL * 100).toFixed(2)}%)`);
+
+// Helper: Sleep
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
